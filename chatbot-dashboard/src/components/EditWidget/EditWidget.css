@@ -1,0 +1,194 @@
+/* ========= Container & Layout ========= */
+
+.edit-widget-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+    padding: 2rem;
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+  }
+  
+  .edit-widget-editor {
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  }
+  
+  .edit-widget-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .edit-widget-label {
+    font-weight: 600;
+    margin: 10px 0 4px;
+    display: block;
+  }
+  
+  .edit-widget-textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    resize: vertical;
+  }
+  
+  /* ========= Footer Navigation Button ========= */
+  
+  .edit-widget-footer {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+  }
+  
+  .chat-widget-button {
+    padding: 14px 30px;
+    background-color: #111;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+  }
+  
+  .chat-widget-button:hover {
+    background-color: #333;
+  }
+  
+  /* ========= Tooltip Icon ========= */
+  
+  .tooltip-icon {
+    margin-left: 8px;
+    cursor: help;
+    font-size: 14px;
+  }
+  
+  /* ========= Chat Widget Icon (Floating Button) ========= */
+  
+  @keyframes pulseWidget {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(106, 17, 203, 0.5);
+    }
+    50% {
+      transform: scale(1.08);
+      box-shadow: 0 0 0 10px rgba(106, 17, 203, 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(106, 17, 203, 0);
+    }
+  }
+  
+  .chat-widget-icon {
+    animation: pulseWidget 2.5s ease-in-out infinite;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #6a11cb;
+    border-radius: 999px;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-size: 400% 400%;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+  }
+  
+  .chat-icon-svg {
+    width: 32px;
+    height: 32px;
+    fill: white;
+    opacity: 0.9;
+  }
+  
+  /* ========= Chat Popup Window ========= */
+  
+  .chat-popup-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 320px;
+    height: 420px;
+    background: white;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999;
+  }
+  
+  .chat-popup-header {
+    padding: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .chat-popup-messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+  
+  /* ========= Chat Messages ========= */
+  
+  .chat-message {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+  
+  .system-message {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+  }
+  
+  .user-message {
+    background: #e0e0e0;
+  }
+  
+  /* ========= Chat Input Area ========= */
+  
+  .chat-popup-input {
+    padding: 12px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .chat-popup-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  .chat-popup-input button {
+    padding: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  

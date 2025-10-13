@@ -1,0 +1,138 @@
+.container {
+    padding: 2rem;
+    max-width: 650px;
+    margin: 2rem auto;
+    font-family: Arial, sans-serif;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+    background-color: #fff;
+  }
+  
+  .header {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #333;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .input,
+  .textarea {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    line-height: 1.5;
+  }
+  
+  .textarea {
+    min-height: 250px;
+    resize: vertical;
+  }
+  
+  .file-input {
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  
+  .link-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .add-button,
+  .delete-button,
+  .train-button {
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease; /* Keep this for smooth transitions */
+    font-weight: normal;
+  }
+  
+  /* Hover effect for Add button */
+  .add-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .add-button:hover {
+    background-color: #e0e0e0; /* Lighter shade on hover */
+  }
+  
+  /* Hover effect for Delete button */
+  .delete-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 1rem;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-weight: normal;
+    box-sizing: border-box;
+  }
+  
+  .delete-button:hover {
+    background-color: #f8d7da; /* A subtle red tint for delete */
+    border-color: #dc3545; /* Darker red border */
+    color: #dc3545; /* Red text */
+  }
+  
+  /* Style for the input specifically within the link group */
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  
+  .link-input {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    line-height: 1.5;
+  }
+  
+  .train-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 12px;
+    background-color: #000;
+    color: #fff;
+    width: 100%;
+    margin-top: 1.5rem;
+    border: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .train-button:hover {
+      background-color: #333; /* Darker on hover */
+  }
+  
+  .error {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: -0.75rem;
+    margin-bottom: 1rem;
+  }
