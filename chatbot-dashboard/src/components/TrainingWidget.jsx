@@ -1,76 +1,104 @@
-import React, { useState } from 'react';
+// src/components/TrainingWidget.jsx
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import './TrainingWidget.css';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'https://localhost:7237/api';
+const api = axios.create({ baseURL: API_BASE });
+
+const msgFromAxios = (e) =>
+  e?.response?.data?.message || e?.response?.data || e?.message || 'Request failed';
+
+const fromApi = (d) => ({
+  businessName: d?.businessName ?? d?.BusinessName ?? '',
+  websiteUrl:   d?.websiteUrl   ?? d?.WebsiteUrl   ?? '',
+  contactLink:  d?.contactLink  ?? d?.ContactLink  ?? '',
+  trainingText: d?.trainingText ?? d?.TrainingText ?? '',
+});
+
+const toPayload = (s) => ({
+  businessName: s.businessName,
+  websiteUrl:   s.websiteUrl,
+  contactLink:  s.contactLink,
+  trainingText: s.trainingText,
+});
+
 export default function TrainingWidget() {
-  const [websiteURL, setWebsiteURL] = useState('');
-  const [helpfulLinks, setHelpfulLinks] = useState(['']);
-  const [customText, setCustomText] = useState('');
-  const [businessName, setBusinessName] = useState('');
-  const [businessCategory, setBusinessCategory] = useState('');
-  const [contactLink, setContactLink] = useState('');
-  const [pdfFiles, setPdfFiles] = useState([]);
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    businessName: '',
+    websiteUrl: '',
+    contactLink: '',
+    trainingText: '',
+  });
+
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  const handleLinkChange = (index, value) => {
-    const links = [...helpfulLinks];
-    links[index] = value;
-    setHelpfulLinks(links);
+  useEffect(() => {
+    const load = async () => {
+      if (!projectId) {
+        alert('Missing projectId in the URL. Route must be /training-widget/:projectId');
+        setLoading(false);
+        return;
+      }
+      try {
+        const { data } = await api.get(`/TrainingData/${projectId}`);
+        setForm(fromApi(data));
+      } catch (err) {
+        if (err?.response?.status !== 404) {
+          alert(`Failed to load: ${msgFromAxios(err)}`);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [projectId]);
+
+  const setField = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+
+  const validate = () => {
+    const next = {};
+    if (!form.businessName.trim()) next.businessName = 'Business Name is required';
+    if (!form.websiteUrl.trim()) next.websiteUrl = 'Website URL is required';
+    if (!form.contactLink.trim()) next.contactLink = 'Contact Link is required';
+    if (!form.trainingText.trim()) next.trainingText = 'Training Info is required';
+    setErrors(next);
+    return Object.keys(next).length === 0;
   };
 
-  const addLinkField = () => {
-    setHelpfulLinks([...helpfulLinks, '']);
-  };
-
-  const removeLinkField = (index) => {
-    const links = [...helpfulLinks];
-    links.splice(index, 1);
-    setHelpfulLinks(links);
-  };
-
-  const handlePDFUpload = (e) => {
-    setPdfFiles([...e.target.files]);
-  };
-
-  const validateFields = () => {
-    const newErrors = {};
-    if (!businessName.trim()) newErrors.businessName = 'Business Name is required';
-    if (!websiteURL.trim()) newErrors.websiteURL = 'Website URL is required';
-    if (!businessCategory.trim()) newErrors.businessCategory = 'Business Category is required';
-    if (!contactLink.trim()) newErrors.contactLink = 'Contact Link is required';
-    if (!customText.trim()) newErrors.customText = 'Training Info is required';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleTrain = async () => {
-    if (!validateFields()) return;
-
-    const formData = new FormData();
-    formData.append('TrainingText', customText);
-    formData.append('ContactLink', contactLink);
-    formData.append('BusinessCategory', businessCategory);
-
-    helpfulLinks.forEach(link => {
-      if (link.trim()) formData.append('HelpfulLinks', link);
-    });
-
-    Array.from(pdfFiles).forEach(file => {
-      formData.append('PdfFiles', file);
-    });
-
+  const handleSave = async () => {
+    if (!validate()) return;
     try {
-      await axios.post('https://localhost:7237/api/setup/full', formData);
-      alert('Chatbot trained and saved successfully.');
-    } catch (error) {
-      console.error('Error saving chatbot setup:', error);
-      alert('There was an error saving the setup.');
+      setSaving(true);
+      await api.post(`/TrainingData/${projectId}`, toPayload(form)); // upsert
+      // Optional toast, then navigate home
+      // toast.success('Saved!');
+     navigate('/home', { replace: true }); // ← go to Home when save succeeds
+    } catch (err) {
+      const msg = msgFromAxios(err);
+      alert(`Save failed: ${msg}`);
+    } finally {
+      setSaving(false);
     }
   };
 
-  const renderError = (field) => (
-    errors[field] && <div className="error">{errors[field]}</div>
-  );
+  const renderError = (key) =>
+    errors[key] ? <div className="error">{errors[key]}</div> : null;
+
+  if (loading) {
+    return (
+      <div className="container">
+        <h2 className="header">Train Chatbot</h2>
+        <p>Loading…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
@@ -79,8 +107,8 @@ export default function TrainingWidget() {
       <label className="label">Business Name</label>
       <input
         type="text"
-        value={businessName}
-        onChange={(e) => setBusinessName(e.target.value)}
+        value={form.businessName}
+        onChange={(e) => setField('businessName', e.target.value)}
         className="input"
       />
       {renderError('businessName')}
@@ -88,83 +116,40 @@ export default function TrainingWidget() {
       <label className="label">Website URL</label>
       <input
         type="url"
-        value={websiteURL}
-        onChange={(e) => setWebsiteURL(e.target.value)}
+        value={form.websiteUrl}
+        onChange={(e) => setField('websiteUrl', e.target.value)}
         className="input"
+        placeholder="https://example.com"
       />
-      {renderError('websiteURL')}
-
-      <label className="label">Helpful Links</label>
-      {helpfulLinks.map((link, index) => (
-  <div key={index} className="input-group">
-    <input
-      type="url"
-      value={link}
-      onChange={(e) => handleLinkChange(index, e.target.value)}
-      placeholder="https://example.com"
-      className="link-input"
-    />
-    <button
-      type="button"
-      onClick={() => removeLinkField(index)}
-      className="delete-button"
-    >
-      Delete
-    </button>
-  </div>
-))}
-
-      <div style={{ marginBottom: '1rem', marginTop: '0.5rem' }}>
-        <button
-          type="button"
-          onClick={addLinkField}
-          className="add-button"
-        >
-          + Add another link
-        </button>
-      </div>
-
-      <label className="label">Business Category</label>
-      <input
-        type="text"
-        value={businessCategory}
-        onChange={(e) => setBusinessCategory(e.target.value)}
-        className="input"
-      />
-      {renderError('businessCategory')}
+      {renderError('websiteUrl')}
 
       <label className="label">Contact Link</label>
       <input
         type="url"
-        value={contactLink}
-        onChange={(e) => setContactLink(e.target.value)}
+        value={form.contactLink}
+        onChange={(e) => setField('contactLink', e.target.value)}
         className="input"
+        placeholder="https://example.com/contact"
       />
       {renderError('contactLink')}
 
       <label className="label">Custom Training Info</label>
       <textarea
-        value={customText}
-        onChange={(e) => setCustomText(e.target.value)}
+        value={form.trainingText}
+        onChange={(e) => setField('trainingText', e.target.value)}
         className="textarea"
+        rows={6}
+        placeholder="Paste core information about the business/services here…"
       />
-      {renderError('customText')}
-
-      <label className="label">Upload PDFs</label>
-      <input
-        type="file"
-        accept="application/pdf"
-        multiple
-        onChange={handlePDFUpload}
-        className="file-input"
-      />
+      {renderError('trainingText')}
 
       <button
         type="button"
-        onClick={handleTrain}
+        onClick={handleSave}
         className="train-button"
+        disabled={saving}
       >
-        Train Chatbot
+        {saving ? 'Saving…' : 'Save & Train'}
       </button>
     </div>
   );
